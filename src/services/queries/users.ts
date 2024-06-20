@@ -3,7 +3,19 @@ import { genId } from '$services/utils';
 import { client } from '$services/redis';
 import { usersKey, usernamesUniqueKey, usernamesKey } from '$services/keys';
 
-export const getUserByUsername = async (username: string) => {};
+export const getUserByUsername = async (username: string) => {
+	const decimalId = await client.zScore(usernamesKey(), username);
+
+	if (!decimalId) {
+		throw new Error('User dose not exist');
+	}
+
+	const id = decimalId.toString(16);
+
+	const user = await client.hGetAll(usersKey(id));
+
+	return deserialize(id, user);
+};
 
 export const getUserById = async (id: string) => {
 	const user = await client.hGetAll(usersKey(id));
@@ -12,7 +24,7 @@ export const getUserById = async (id: string) => {
 };
 
 export const createUser = async (attrs: CreateUserAttrs) => {
-	const id = genId();//return hex decimal as string
+	const id = genId(); //return hex decimal as string
 
 	const exists = await client.sIsMember(usernamesUniqueKey(), attrs.username);
 
