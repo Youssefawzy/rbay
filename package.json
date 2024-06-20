@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "svelte-kit dev",
+		"debug": "ndb dev",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
@@ -52,6 +53,7 @@
 		"lodash": "^4.17.21",
 		"luxon": "^2.3.0",
 		"material-icons": "^1.10.7",
+		"ndb": "^1.1.5",
 		"nodemon": "^2.0.15",
 		"pm2": "^5.2.0",
 		"redis": "^4.0.3",
