@@ -6,5 +6,6 @@ export const userLikesKey = (userId: string) => `users:likes#${userId}`;
 export const usernamesKey = () => 'usernames';
 
 //itms
-export const itemsKey =  (itemId: string) => `items#${itemId}`;
+export const itemsKey = (itemId: string) => `items#${itemId}`;
 export const itemsByViewsKey = () => 'items:views';
+export const itemsByEndingAtKey = () => 'items:endingAt';
