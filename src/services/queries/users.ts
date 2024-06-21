@@ -24,21 +24,8 @@ export const getUserById = async (id: string) => {
 };
 
 export const createUser = async (attrs: CreateUserAttrs) => {
-	const id = genId(); //return hex decimal as string
-
-	const exists = await client.sIsMember(usernamesUniqueKey(), attrs.username);
-
-	if (exists) {
-		throw new Error('Username is taken');
-	}
-
+	const id = genId();
 	await client.hSet(usersKey(id), serialize(attrs));
-	await client.sAdd(usernamesUniqueKey(), attrs.username);
-	await client.zAdd(usernamesKey(), {
-		value: attrs.username,
-		score: parseInt(id, 16)
-	});
-
 	return id;
 };
 
