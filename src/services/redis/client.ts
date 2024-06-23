@@ -1,5 +1,4 @@
 import { itemsByViewsKey, itemsKey, itemsViewsKey } from '$services/keys';
-import { incrementView } from '$services/queries/views';
 import { createClient, defineScript } from 'redis';
 
 const client = createClient({
@@ -43,12 +42,6 @@ const client = createClient({
 			transformReply() {}
 		})
 	}
-});
-
-client.on('connect', async () => {
-	await client.addOneAndStore('books:count', 5);
-	const result = await client.get('books:count');
-	console.log(result);
 });
 
 client.on('error', (err) => console.error(err));

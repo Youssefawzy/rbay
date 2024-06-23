@@ -17,7 +17,7 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 			throw new Error('Bid too low');
 		}
 		if (item.endingAt.diff(DateTime.now()).toMillis() < 0) {
-			throw new Error('item close to bidding');
+			throw new Error('Item closed to bidding');
 		}
 
 		const serialized = serializeHistory(attrs.amount, attrs.createdAt.toMillis());
