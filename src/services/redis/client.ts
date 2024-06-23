@@ -1,3 +1,5 @@
+import { itemsByViewsKey, itemsKey, itemsViewsKey } from '$services/keys';
+import { incrementView } from '$services/queries/views';
 import { createClient, defineScript } from 'redis';
 
 const client = createClient({
@@ -10,7 +12,7 @@ const client = createClient({
 		addOneAndStore: defineScript({
 			NUMBER_OF_KEYS: 1,
 			SCRIPT: `
-				return redis.call('SET',KEYS[1],1 + tonumber(ARG[1]))
+				return redis.call('SET',KEYS[1],1 + tonumber(ARGV[1]))
 				`,
 			transformArguments(key: string, value: number) {
 				return [key, value.toString()];
@@ -18,6 +20,27 @@ const client = createClient({
 			transformReply(reply: any) {
 				return reply;
 			}
+		}),
+		incrementView: defineScript({
+			NUMBER_OF_KEYS: 3,
+			SCRIPT: `
+			local itemsViewsKey = KEYS[1]
+			local itemsKey= KEYS[2]
+			local itemsByViewsKey = KEYS[3]
+			local itemId = ARGV[1]
+			local userId = ARGV[2]
+
+			local inserted = redis.call('PFADD', itemsViewsKey, userId)
+
+			if inserted == 1 then
+				redis.call('HINCBY', itemsKey, 'views',1)
+				redis.call('ZINCRBY', itemsByViewsKey,1,itemId)
+			end
+			`,
+			transformArguments(itemId: string, userId: string) {
+				return [itemsViewsKey(itemId), itemsKey(itemId), itemsByViewsKey(), itemId, userId];
+			},
+			transformReply() {}
 		})
 	}
 });
